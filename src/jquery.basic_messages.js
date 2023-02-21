@@ -1,70 +1,76 @@
-(function($) {
-    $.BasicMessage = {
-      defaults: {
-        success: {
-          plugin: 'toast',
-          toastOptions: {},
-          sweetAlertOptions: {}
-        },
-        error: {
-          plugin: 'sweetalert',
-          toastOptions: {},
-          sweetAlertOptions: {}
-        },
-        info: {
-          plugin: 'toast',
-          toastOptions: {},
-          sweetAlertOptions: {}
-        },
-        warning: {
-          plugin: 'sweetalert',
-          toastOptions: {},
-          sweetAlertOptions: {}
+(function ($) {
+  $.BasicMessage = {
+    defaults: {
+      success: {
+        plugin: 'toast',
+        options: {
+          title: "¡Exito!"
         }
       },
-      settings: {},
-      init: function(options) {
-        this.settings = $.extend(true, {}, this.defaults, options);
-        return this;
-      },
-      flash: function(type, messages) {
-        if (type in this.settings) {
-          var plugin = this.settings[type].plugin;
-          if (plugin === 'toast') {
-            messages.forEach(msg => {
-                $.toast($.extend(true, {}, this.settings[type].toastOptions, {
-                    text:msg
-                  }));
-            });
-          } else if (plugin === 'sweetalert') {
-            new Swal($.extend(true, {}, this.settings[type].sweetAlertOptions, {
-              title: type.charAt(0).toUpperCase() + type.slice(1),
-              text: messages.join('\n')
-            }));
-          }
+      error: {
+        plugin: 'sweetalert',
+        options: {
+          title: "!Error!"
         }
       },
-      success: function(messages) {
-        this.flash('success', messages);
-      },
-      error: function(messages) {
-        this.flash('error', messages);
-      },
-      info: function(messages) {
-        this.flash('info', messages);
-      },
-      warning: function(messages) {
-        this.flash('warning', messages);
-      },
-      toast: function(type, messages) {
-        if (this.settings[type].plugin === 'toast') {
-          this.flash(type, messages);
+      info: {
+        plugin: 'sweetalert',
+        options: {
+          title: "!Info!"
         }
       },
-      sweetalert: function(type, messages) {
-        if (this.settings[type].plugin === 'sweetalert') {
-          this.flash(type, messages);
+      warning: {
+        plugin: 'sweetalert',
+        options: {
+          title: "!Warning!"
         }
       }
-    };
-  })(jQuery);
+    },
+    settings: {},
+    init: function (options) {
+      this.settings = $.extend(true, {}, this.defaults, options);
+      return this;
+    },
+    flash: function (type, messages) {
+      if (type in this.settings) {
+        var config = this.settings[type];
+        var plugin = config.plugin;
+        var options = config.options;
+
+        if (plugin === 'toast') {
+          messages.forEach(msg => {
+            var opPlugin = $.extend(true, {}, this.settings[type].options, options);
+            toastr[type](msg, opPlugin.title);
+          });
+        } else if (plugin === 'sweetalert') {
+          var opPlugin = $.extend(true, {}, this.settings[type].options, { ...options, text: messages.join('<br />') });
+          new Swal(opPlugin);
+        }
+      }
+
+      return $(this);
+    },
+    success: function (messages) {
+      this.flash('success', messages);
+    },
+    error: function (messages) {
+      this.flash('error', messages);
+    },
+    info: function (messages) {
+      this.flash('info', messages);
+    },
+    warning: function (messages) {
+      this.flash('warning', messages);
+    },
+    toast: function (type, messages) {
+      if (this.settings[type].plugin === 'toast') {
+        this.flash(type, messages);
+      }
+    },
+    sweetalert: function (type, messages) {
+      if (this.settings[type].plugin === 'sweetalert') {
+        this.flash(type, messages);
+      }
+    }
+  };
+})(jQuery);
