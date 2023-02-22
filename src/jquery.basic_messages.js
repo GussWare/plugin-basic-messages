@@ -24,6 +24,12 @@
         options: {
           title: "!Warning!"
         }
+      },
+      toast: {
+
+      },
+      sweetalert:{
+
       }
     },
     settings: {},
@@ -32,6 +38,8 @@
       return this;
     },
     flash: function (type, messages) {
+      var self = this;
+
       if (type in this.settings) {
         var config = this.settings[type];
         var plugin = config.plugin;
@@ -40,10 +48,10 @@
         if (plugin === 'toast') {
           messages.forEach(msg => {
             var opPlugin = $.extend(true, {}, this.settings[type].options, options);
-            toastr[type](msg, opPlugin.title);
+            self.toast(type, opPlugin.title, msg);
           });
         } else if (plugin === 'sweetalert') {
-          var opPlugin = $.extend(true, {}, this.settings[type].options, { ...options, text: messages.join('<br />') });
+          var opPlugin = $.extend(true, {}, this.settings[type].options, { ...options, icon: type, text: messages.join('<br />') });
           new Swal(opPlugin);
         }
       }
@@ -62,15 +70,24 @@
     warning: function (messages) {
       this.flash('warning', messages);
     },
-    toast: function (type, messages) {
-      if (this.settings[type].plugin === 'toast') {
-        this.flash(type, messages);
-      }
+    toast: function (type, title, messages) {
+      toastr[type](messages, title);
     },
-    sweetalert: function (type, messages) {
-      if (this.settings[type].plugin === 'sweetalert') {
-        this.flash(type, messages);
+    sweetalert: function (type, title, messages) {
+      if (typeof type === "object") {
+        new Swal(title);
+      } else {
+
+        var options = {
+          title: title,
+          icon: type,
+          showCancelButton: true,
+          text: messages.join('<br />')
+        };
+
+        new Swal(options);
       }
+
     }
   };
 })(jQuery);

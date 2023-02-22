@@ -39,13 +39,14 @@
                         }
                     }
                 }
-            ).flash("success", [
-                "Mensaje de exito 1",
-            ]);
+            );
 
-            $.BasicMessage.error(["Este es un mensaje de error"]);
+            //$.BasicMessage.error(["Este es un mensaje de error"]);
             //$.BasicMessage.info(["Este es un mensaje Informativo"]);
             //$.BasicMessage.warning(["Este es un mensaje de alerta"]);
+
+            //$.BasicMessage.toast("warning", "¡ Exito !" , ["Este es un mensaje de success"]);
+            $.BasicMessage.sweetalert("success", "¡ Exito !" , ["Este es un mensaje de success"]);
         });
     </script>
 </body>
